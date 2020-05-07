@@ -20,7 +20,7 @@ function loadJSON(filename, data_, callback)
         {
             console.log(err);
         }
-        else
+        else if(data)
         {
             //console.log('data_parse');
             JSON.parse(data,(a,b)=>{
@@ -46,11 +46,8 @@ function loadWriteJSON(filename, data_, callback)
     var temp = {};
 
     loadJSON(filename, temp, ()=>{
-        console.log('temp',temp);
-        console.log('data_',data_);
         addJSON(temp, data_);
-        console.log('temp2',temp);
-        fs.writeFile(file, temp, ()=>{
+        fs.writeFile(file, JSON.stringify(temp), ()=>{
             if(callback)
             {
                 callback();
@@ -59,11 +56,11 @@ function loadWriteJSON(filename, data_, callback)
     });
 }
 
-function addJSON(data_, add)
+function addJSON(data_, input)
 {
-    for(var e in add)
+    for(var e in input)
     {
-        data_[e] = add[e];
+        data_[e] = input[e];
     }
 }
 
