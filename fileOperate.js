@@ -1,6 +1,34 @@
 var path = require('path');
 var fs = require('fs');
 
+async function loadToJSON(path)
+{
+    return new Promise((resolve, reject)=>{
+        fs.readFile(path, (err, data)=>{
+            if(err){
+                console.log('Error loading file:', path);
+                reject(err);
+            }else{
+                resolve(JSON.parse(data));
+            }
+        });
+    });
+}
+
+
+async function writeToJSON(path, data)
+{
+    return new Promise((resolve, reject)=>{
+        fs.write(path, JSON.stringify(data), (err)=>{
+            if(err){
+                reject(err);
+            }else{
+                resolve();
+            }
+        });
+    });
+}
+
 function loadJSON(filename, data_, callback)
 {
     if(!data_)
@@ -139,6 +167,7 @@ function itemCMP(itemA, itemB)
     return true;
 }
 
+module.exports.loadToJSON = loadToJSON;
 module.exports.loadJSON = loadJSON;
 module.exports.loadJSONSync = loadJSONSync;
 module.exports.printJ = printJ;

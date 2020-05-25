@@ -1,3 +1,69 @@
+const ShOp = require('./sheetOperate'); 
+
+class EventHandler{
+    constructor(_bot, _botId) {
+        this.bot = _bot;
+        this.botId = _botId;
+    }
+
+    handle(_event) {
+        this.event = _event;
+        this.eventType = _event.message.type;
+        let selectTypeFunc = this[this.eventType];
+        if(typeof(selectTypeFunc) === 'function'){
+            this[this.eventType]();
+            this.command();
+        }
+        else{
+            console.error('handler type error');
+            return;
+        }
+    }
+
+    text() {
+        const words = this.event.message.text.split(' ');
+        this.command = new CommandList()[words[0]];
+        if(typeof(this.command) !== 'function'){
+            this.command = new TextHandler().defaultCommand;
+        }
+    }
+}
+
+class TextHandler {
+    defaultCommand(){
+        this.event.reply('你好');
+    }
+}
+
+class CommandList{
+    constructor(){
+        this['系統時間?'] = function(){
+            this.event.reply(new Date().toString());
+            //this.bot.push(this.botId.ownerId, now.toString());
+        }
+
+        this['現在時間?'] = function(){
+            this.event.reply(new Date().toLocaleString());
+        }
+
+        this['提醒我'] = function(){
+            //
+        }
+
+        this['列出所有命令'] = function(){
+            const allCommand = new CommandList();
+            let commandList = '';
+            for(let key in allCommand){
+                if(typeof(allCommand[key]) === 'function'){
+                    commandList = commandList.concat(String(key),'\n');
+                }
+            }
+            console.log(commandList);
+            this.event.reply(commandList);
+        }
+    }
+}
+
 function msgHandler(event, bot, botId)
 {
     if(event.message.type != 'text')
@@ -93,7 +159,7 @@ function Handler(event, pack)
     }
 }
 
-module.exports.msgHandler = msgHandler;
+module.exports.msgHandler = EventHandler;
 
 /*
 function msgHandler(event)
